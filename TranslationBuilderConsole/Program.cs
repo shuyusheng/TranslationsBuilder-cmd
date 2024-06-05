@@ -35,7 +35,15 @@ namespace TranslationsBuilderConsole
                 Environment.Exit(0);
             }
 
+
+            if (showHelp || inputFile.Equals(""))
+            {
+                ShowHelp(p);
+                Environment.Exit(0);
+            }
+
             // Assume Power BI Desktop is running
+
             var process = Process.GetProcessesByName("msmdsrv")[0];
             var tcpTable = ManagedIpHelper.GetExtendedTcpTable();
             var tcpRow = tcpTable.SingleOrDefault((r) => r.ProcessId == process.Id && r.State == TcpState.Listen && IPAddress.IsLoopback(r.LocalEndPoint.Address));
@@ -45,21 +53,11 @@ namespace TranslationsBuilderConsole
             TranslationsManager.ImportTranslations(inputFile);
 
             // Assume Power BI Desktop saves changes and closes
-
-            return;
-
-            if (showHelp ||
-                inputFormat.Equals("") ||
-                inputFile.Equals("") ||
-                pbixFile.Equals(""))
-            {
-                ShowHelp(p);
-                Environment.Exit(0);
-            }
         }
+
         static void ShowHelp(OptionSet p)
         {
-            Console.WriteLine("Usage: PayloadGenerator [OPTIONS]+");
+            Console.WriteLine("Usage: TranslationBuilderConsole [OPTIONS]+");
             Console.WriteLine();
             Console.WriteLine("Options:");
             p.WriteOptionDescriptions(Console.Out);
