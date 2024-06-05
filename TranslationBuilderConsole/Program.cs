@@ -35,15 +35,16 @@ namespace TranslationsBuilderConsole
                 Environment.Exit(0);
             }
 
-            // We either run Power BI Desktop ourselves, or have the pipeline run it
-
+            // Assume Power BI Desktop is running
             var process = Process.GetProcessesByName("msmdsrv")[0];
-            var parent = process.GetParent();
-
             var tcpTable = ManagedIpHelper.GetExtendedTcpTable();
             var tcpRow = tcpTable.SingleOrDefault((r) => r.ProcessId == process.Id && r.State == TcpState.Listen && IPAddress.IsLoopback(r.LocalEndPoint.Address));
 
             TranslationsManager.Connect("localhost:" + tcpRow?.LocalEndPoint.Port.ToString());
+
+            TranslationsManager.ImportTranslations(inputFile);
+
+            // Assume Power BI Desktop saves changes and closes
 
             return;
 
